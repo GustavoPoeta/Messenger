@@ -1,0 +1,24 @@
+{
+    "users": [
+      {
+        "name": "Alice",
+        "profile_picture": "https://i.imgur.com/ENTFYZX.png"
+      },
+      {
+        "name": "Bob",
+        "profile_picture": "https://i.imgur.com/iDv7xPz.png"
+      },
+      {
+        "name": "Charlie",
+        "profile_picture": "https://i.imgur.com/PMjrzi9.jpeg"
+      },
+      {
+        "name": "Diana",
+        "profile_picture": "https://i.imgur.com/VIWztfa.jpeg"
+      },
+      {
+        "name": "Edward",
+        "profile_picture": "https://i.imgur.com/gPi0UJx.jpeg"
+      }
+    ]
+  }

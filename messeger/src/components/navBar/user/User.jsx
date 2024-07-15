@@ -1,14 +1,15 @@
 import './User.css'
 
-function User () {
+function User (props) {
 
-
+    
     return (
 
         <>
         
-            <div id="user">
-
+            <div class="user" style={props.style}>
+                <img src={props.iconUrl} alt="Ícone de usuário" className="userPfp"/>
+                <p className="userNickname">{props.nickname}</p>
             </div>
         
         </>

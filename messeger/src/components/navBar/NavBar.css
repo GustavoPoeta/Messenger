@@ -10,13 +10,9 @@
 }
 
 #contacts {
-    height: 40%;
-    width: 80%;
+    display: flex;
+    flex-direction: column;
+    min-height: 40%;
+    width: 85%;
     
-}
-
-#groups {
-    height: 40%;
-    width: 80%;
-    border-top: 1px solid #001A2C;
 }
