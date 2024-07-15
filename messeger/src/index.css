@@ -1,4 +1,11 @@
+
+@font-face {
+    src: url('./assets/ggsansMedium.ttf');
+    font-family: font;
+}
+
 * {
     padding: 0;
     margin: 0;
+    font-family: font;
 }
