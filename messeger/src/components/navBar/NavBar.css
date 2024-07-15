@@ -1,0 +1,22 @@
+
+#navBar {
+    height: 100vh;
+    width: 15vw;
+    background-color: #00111C;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+#contacts {
+    height: 40%;
+    width: 80%;
+    
+}
+
+#groups {
+    height: 40%;
+    width: 80%;
+    border-top: 1px solid #001A2C;
+}
