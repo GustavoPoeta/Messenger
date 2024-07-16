@@ -2,7 +2,8 @@
     "users": [
       {
         "name": "Alice",
-        "profile_picture": "https://i.imgur.com/ENTFYZX.png"
+        "profile_picture": "https://i.imgur.com/ENTFYZX.png",
+        "status": "nothing special."
       },
       {
         "name": "Bob",
@@ -14,11 +15,13 @@
       },
       {
         "name": "Diana",
-        "profile_picture": "https://i.imgur.com/VIWztfa.jpeg"
+        "profile_picture": "https://i.imgur.com/VIWztfa.jpeg",
+        "status": ">:3"
       },
       {
         "name": "Edward",
-        "profile_picture": "https://i.imgur.com/gPi0UJx.jpeg"
+        "profile_picture": "https://i.imgur.com/gPi0UJx.jpeg",
+        "status": "Even you Brutus?"
       }
     ]
   }

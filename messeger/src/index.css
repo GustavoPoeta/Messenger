@@ -9,3 +9,7 @@
     margin: 0;
     font-family: font;
 }
+html {
+    overflow-y: hidden;
+    overflow-x: hidden;
+}

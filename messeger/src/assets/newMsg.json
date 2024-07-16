@@ -1,0 +1,17 @@
+{
+    "newMessages": {
+        "Alice": {
+        "howMany": 12,
+        "LastNewMessage": "that isnt how it should be."
+    },
+        "Diana": {
+            "howMany": 2,
+            "LastNewMessage": "hyd?? we didnt talk to each other for decades!"
+        },
+        "Edward": {
+            "howMany": 3,
+            "LastNewMessage": "im still working on it but i think it's pretty neat."
+        }
+    }
+    
+}

@@ -17,8 +17,6 @@ function NavBar () {
         
             <div id="navBar">
 
-                
-
                 {/* list of contacts the user has */}
                 <div id="contacts">
                     {

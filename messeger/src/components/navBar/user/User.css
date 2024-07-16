@@ -2,11 +2,11 @@
 
 .user {
     margin-top: 10px;
-    min-width: 100%;
-    min-height: 20%;
+    width: 100%;
+    height: 7%;
+    padding: 2px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
     border-bottom: 1px solid #002137;
 }
 
@@ -16,13 +16,14 @@
 }
 
 .userPfp {
-    width: 30%;
-    height: 75%;
+    width: 25%;
+    height: 95%;
     border-radius: 50%;
     margin-left: 10px;
 }
 
 .userNickname {
+    justify-self: center;
     color: #adb5bd;
-    margin-right: 10px;
+    margin-left: 10px;
 }

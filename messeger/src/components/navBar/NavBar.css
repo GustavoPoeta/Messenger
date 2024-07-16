@@ -12,7 +12,7 @@
 #contacts {
     display: flex;
     flex-direction: column;
-    min-height: 40%;
+    height: 100%;
     width: 85%;
     
 }
