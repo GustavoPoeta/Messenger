@@ -2,7 +2,7 @@ import User from './user/User';
 import users from '../../assets/users.json';
 import './NavBar.css';
 
-function NavBar () {
+function NavBar (props) {
 
     const borderChange = (index) => {
         if (index === users.users.length - 1) {
@@ -10,7 +10,6 @@ function NavBar () {
         }
         return {};
     } // change the border-bottom property if the current user on the map method is the last.
-
 
     return (
         <>
@@ -21,7 +20,7 @@ function NavBar () {
                 <div id="contacts">
                     {
                         users.users.map((user, index) => (
-                            <User style= {borderChange(index)}nickname= {user.name} iconUrl={user.profile_picture}/>
+                            <User style= {borderChange(index)}nickname= {user.name} iconUrl={user.profile_picture} setUserClicked = {props.setUserClicked}/>
                         )) // dinamically calls the user component for every user in the json file.
                     }
                 </div>

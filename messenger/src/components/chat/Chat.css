@@ -1,0 +1,38 @@
+
+
+#Chat {
+    width: 85vw;
+    height: 100vh;
+    background-color: #001523;
+    border-left: 1px solid #002137;
+    display: flex;
+    flex-direction: column;
+}
+
+#messages {
+    width: 100%;
+    height: 87%;
+}
+
+#inputMessage { /* the container */
+    width: 100%;
+    height: 13%;
+    background-color: #00253E;
+    border-radius: 15px 15px 0 0;
+    display: flex;
+    align-items: center;
+}
+
+#input { /* the input for text messages */
+    width: 55%;
+    height: 55%;
+    border-radius: 20px;
+    background-color: #00406C;
+    border: 1px solid rgba(0, 17, 28, 0.6);
+    color: white;
+    padding: 5px;
+}
+
+#input:focus {
+    outline: 0;   
+}
