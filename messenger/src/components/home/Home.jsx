@@ -4,10 +4,6 @@ import './Home.css';
 function Home () {
 
 
-    const newMessageChecker = () => {
-
-    }
-
     return (
         <>
         
