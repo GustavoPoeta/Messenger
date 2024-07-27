@@ -1,4 +1,5 @@
 import './Chat.css';
+import {useRef} from 'react';
 import users from '../../assets/users.json';
 import PropTypes from 'prop-types';
 
@@ -17,6 +18,10 @@ function Chat (props) {
         }
     }
 
+    const inputRef = useRef(null);
+    if (props.keyTyped != "") {
+        inputRef.current.focus();
+    } 
 
     return (
         <>
@@ -49,7 +54,11 @@ function Chat (props) {
                         
                     </div>
 
-                    <input type="text" id='input'/>
+                    {
+                        
+                    }
+
+                    <input type="text" id='input' ref={inputRef}/>
 
                 </div>
             </div>
@@ -60,7 +69,8 @@ function Chat (props) {
 }
 
 Chat.propTypes = {
-    userClicked: PropTypes.string.isRequired
+    userClicked: PropTypes.string.isRequired,
+    keyTyped: PropTypes.string
 }
 
 export default Chat;
