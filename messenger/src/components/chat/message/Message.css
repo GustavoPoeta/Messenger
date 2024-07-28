@@ -1,0 +1,51 @@
+
+.container {
+    display: flex;
+    height: fit-content;
+    width: 70%;
+    align-items: center;
+}
+
+.containerSelf {
+    margin: 25px 30% 0 0;
+    justify-content: end;
+
+}
+
+.containerTarget {
+    margin: 25px 0 0 30%;
+    justify-content: start;
+}
+
+.messageContainer {
+    max-width: fit-content;
+    min-width: 35px;
+    max-height: fit-content;
+    min-height: 23px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+    border-radius: 20px;
+} 
+
+.messageTarget {
+    background-color: #002137;
+}
+
+.messageSelf {
+    align-self: end;
+    background-color: #002E4E;
+}
+
+.messageContent {
+    color: #adb5bd;
+    font-size: 16px;
+}
+
+.messageOwnerPfp {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    margin: 0 15px 0 15px;
+}
