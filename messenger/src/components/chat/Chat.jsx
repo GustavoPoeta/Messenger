@@ -13,11 +13,13 @@ function Chat(props) {
 
   const [arrayOfMessages, setArrayMessage] = useState([]);
 
+  // check if there's an user that shares the name of the contact that was clicked
   const headerHandler = () => {
     const matchedUser = users.users.find(
       (user) => user.name === props.userClicked
     );
 
+    // if there's an user that shares the name, create the header with its information
     if (matchedUser) {
       return (
         <>
