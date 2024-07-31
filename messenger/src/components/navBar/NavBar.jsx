@@ -2,8 +2,14 @@ import PropTypes from 'prop-types';
 import User from './user/User';
 import users from '../../assets/users.json';
 import './NavBar.css';
+import logo from '../../assets/logo.png';
+import addFriendIcon from '../../assets/person-plus-fill.svg';
 
 function NavBar (props) {
+
+    const goHome = () => {
+        props.setUserClicked(() => "")
+    } // sets userClicked to "" so the page goes home
 
     const borderChange = (index) => {
         if (index === users.users.length - 1) {
@@ -16,6 +22,12 @@ function NavBar (props) {
         <>
         
             <div id="navBar">
+
+                <header id='navbarHeader'>
+                    <img src={addFriendIcon} alt="add a friend button" id='AddFriendIcon'/>
+                </header>
+
+                <img src={logo} alt="button to go home with night owl's icon" id='navbarHomeIcon' onClick={goHome}/>
 
                 {/* list of contacts the user has */}
                 <div id="contacts">

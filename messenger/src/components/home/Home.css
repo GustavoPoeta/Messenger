@@ -6,6 +6,7 @@
     background-color: #001523;
     border-left: 1px solid #002137;
     display: flex;
+    box-sizing: border-box;
     padding: 20px;
 }
 
