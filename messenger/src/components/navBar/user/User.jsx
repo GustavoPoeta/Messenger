@@ -8,7 +8,8 @@ function User (props) {
         <>
         
             <div className="user" style={props.style} onClick={() => {
-                props.setUserClicked(props.nickname)
+                props.setUserClicked(props.nickname);
+                props.setActualPage("1");
             }}>
                 <img src={props.iconUrl} alt="Ícone de usuário" className="userPfp"/>
                 <p className="userNickname">{props.nickname}</p>
@@ -24,7 +25,8 @@ User.propTypes = {
     setUserClicked: PropTypes.func.isRequired,
     style: PropTypes.object,
     iconUrl: PropTypes.string.isRequired,
-    nickname: PropTypes.string.isRequired
+    nickname: PropTypes.string.isRequired,
+    setActualPage: PropTypes.func.isRequired
 }
 
 export default User;

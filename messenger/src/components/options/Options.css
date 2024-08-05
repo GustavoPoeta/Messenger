@@ -1,0 +1,76 @@
+
+#options {
+    width: 85vw;
+    height: 100vh;
+    background-color: #00111C;
+    border-left: 1px solid #002137;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#optionsContainer {
+    width: 90%;
+    height: 90%;
+    border: 1px solid #00253E;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: start;
+    box-sizing: border-box;
+    padding: 30px;
+}
+
+#profileInfoDiv {
+    width: 90%;
+    height: 40%;
+    background-color: #002137;
+    border-radius: 30px;
+    display: flex;
+    justify-content: flex-start;
+    box-sizing: border-box;
+    align-items: center;
+    padding: 6%;
+}
+
+#profileInfoPfp {
+    width: 20%;
+    height: auto;
+    border-radius: 50%;
+}
+
+#profileInfoInputs {
+    width: 60%;
+    height: 60%;
+    display: flex;
+    flex-direction: column;
+    margin-left: 20px;
+}
+
+
+.profileInfoInput {
+    background-color: #003355;
+    border: none;
+    width: 50%;
+    height: 100%;
+    border-radius: 15px;
+    padding: 10px;
+    box-sizing: border-box;
+    color: #adb5bd;
+    font-size: 16px;
+}
+.profileInfoInput:disabled {
+    color:gray;
+}
+
+.profileInfoEdit {
+    width: 25px;
+    filter: invert(15%) sepia(26%) saturate(6491%) hue-rotate(186deg) brightness(96%) contrast(101%);
+    margin-left: 5px;
+}
+
+.profileInfoEdit:hover {
+    cursor: pointer;
+    filter: invert(15%) sepia(26%) saturate(6491%) hue-rotate(186deg) brightness(150%) contrast(101%);
+}
