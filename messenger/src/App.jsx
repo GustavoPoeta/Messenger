@@ -1,17 +1,19 @@
-
+import './App.css'
 import { useCallback, useEffect ,useState } from 'react';
 import NavBar from './components/navBar/NavBar.jsx';
 import Chat from './components/chat/Chat.jsx';
-import './App.css'
 import Home from './components/home/Home.jsx';
 import Options from './components/options/Options.jsx';
+import Login from './components/login/Login.jsx';
 
 function App() {
 
   const [userClicked, setUserClicked] = useState("");
   const [isInputFocused, setInputFocused] = useState(false);
   const [actualPage, setActualPage] = useState("0");
+  const [isUserLog, setIsUserLog] = useState(false);
   
+
   const handleName = useCallback((name) => {
     setUserClicked(name);
   }, [setUserClicked]);
@@ -45,25 +47,47 @@ function App() {
 
   const handlePage = useCallback(() => { // returns the component based on the number in actualPage 
     switch (actualPage) {
-      case "0": return <Home />;
-      case "1": return <Chat userClicked={userClicked} keyTyped={keyTyped} actualPage={actualPage} isInputFocused={isInputFocused}/>;
-      case "2": return <Options setInputFocused={setInputFocused} />;
+      case "0": return <>
+        <NavBar
+        setUserClicked={handleName}
+        setInputFocused={setInputFocused}
+        setActualPage={setActualPage}/> 
+        <Home />
+      </>;
+      case "1": return <>
+
+      <NavBar
+      setUserClicked={handleName}
+      setInputFocused={setInputFocused}
+      setActualPage={setActualPage}/> 
+
+      <Chat userClicked={userClicked}
+        keyTyped={keyTyped}
+        actualPage={actualPage}
+        isInputFocused={isInputFocused}
+      />; 
+
+    </>;
+      case "2": return <>
+        <NavBar
+        setUserClicked={handleName}
+        setInputFocused={setInputFocused}
+        setActualPage={setActualPage}
+        /> 
+        <Options setInputFocused={setInputFocused} />;
+      </>
+
       default: return null;
     }
-  }, [actualPage, userClicked, keyTyped, setInputFocused, isInputFocused]);
-
-
-
+  }, [actualPage, handleName, userClicked, keyTyped, isInputFocused]);
+        
   return (
     <>
       <div id="app">
-        <NavBar 
-        setUserClicked = {handleName} 
-        setInputFocused={setInputFocused} 
-        setActualPage={setActualPage}
-        />
-        
-        {handlePage()}
+        {isUserLog ?  
+        handlePage()
+        :
+        <Login setIsUserLog = {setIsUserLog} isUserLog={isUserLog}/>} 
       </div>
     </>
   )

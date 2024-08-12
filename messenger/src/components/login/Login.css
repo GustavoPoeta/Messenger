@@ -1,0 +1,87 @@
+
+
+main {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    background-color: #001523;
+    align-items: center;
+    justify-content: center;
+}
+
+#loginContainer {
+    width: 30%;
+    height: 70%;
+    background-color: #00253e;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    -webkit-box-shadow: 0 0 20% 10px #000;
+    -moz-box-shadow: 0 0 20% 10px #000;
+    box-shadow: 0 0 20% 10px #000;
+    padding: 50px;
+}
+
+#loginLogo {
+    width: 200px;
+    filter: invert(19%) sepia(95%) saturate(1352%) hue-rotate(180deg) brightness(98%) contrast(103%);
+    user-select: none;
+}
+
+#loginTitle {
+    color: hsl(204, 100%, 30%);
+    text-shadow: 0 3px 5px #001523;
+}
+
+.input {
+    width: 250px;
+    height: 40px;
+    background-color: #00406C;
+    border: none;
+    border-radius: 20px;
+    display: flex;
+    vertical-align: center;
+    text-align: center;
+    color: #adb5bd;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+.input:focus {
+    outline: none;
+}
+
+#email {
+    margin-bottom: 15px;
+}
+
+#username {
+    margin-bottom: 15px;
+}
+
+#changePage {
+    color: #004fc5;
+    text-decoration: underline;
+    margin-left: 10px;
+    font-size: 16px;
+}
+
+#changePage:hover {
+    cursor: pointer;
+}
+
+.submitBtn {
+    background-color: #00406C;
+    width: 120px;
+    min-height: 40px;
+    border: none;
+    border-radius: 20px;
+    color: #adb5bd;
+    font-size: 15px;
+}
+
+.submitBtn:hover {
+    cursor: pointer;
+}
