@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { useState, useRef } from 'react';
 import axios from 'axios';
 
-function Login () {
+function Login (props) {
 
     const [page, setPage] = useState("login");
     const emailInput = useRef(null);
@@ -29,33 +29,51 @@ function Login () {
     };
 
 
-    const randomId = () => {
-        return Math.floor(Math.random() * 9999999999);
-    }
-
     const handleLogin = () => {
 
-        if (page === "login") {
+        if (page === "sign") {
 
             axios.post('http://localhost:3500/newUser', {
-                id: `${randomId()}`,
-                username: `${usernameInput}`,
-                email: `${emailInput}`,
-                password: `${passwordInput}`
-                })
+
+                username: `${usernameInput.current.value}`,
+                email: `${emailInput.current.value}`,
+                password: `${passwordInput.current.value}`
+
+            })
 
                 .then(response => {
+
                     console.log(response);
+                    props.setUserLogged(`${emailInput.current.value}`);
+
                 })
 
                 .catch(err => {
+
                     console.error(err);
+
                 })
 
         } 
-        else if (page === "sign") {
-            axios.get('http://localhost:3500/users', {
-            
+        else if (page === "login") {
+
+            axios.post('http://localhost:3500/users', {
+                email: `${emailInput.current.value}`,
+                password: `${passwordInput.current.value}`
+            })
+
+            .then (response => {
+                
+                if (response.status === 200) {
+
+                    props.setUserLogged(`${emailInput.current.value}`);
+                    
+                }
+
+            })
+
+            .catch (err => {
+                console.error(err);
             })
         }
         
@@ -74,13 +92,39 @@ function Login () {
 
                     <div style={{marginBottom: "20px", marginTop: "10px"}}>
 
-                        {page !== "login" ? <input type="text" id='username' className='input' placeholder='type your username' onFocus={noPlaceholderOnFocus} ref={usernameInput} onBlur={placeholderOnBlur}/> : null}
+                        {page !== "login" ? <input type="text" id='username' className='input'
+                            placeholder='type your username'
+                            onFocus={noPlaceholderOnFocus}
+                            ref={usernameInput}
+                            onBlur={placeholderOnBlur}
+                            /> 
+                            :
+                            null}
 
-                        <input type="email" id='email' className='input' placeholder='type your email' onFocus={noPlaceholderOnFocus} ref={emailInput} onBlur={placeholderOnBlur}/>
+
+
+                        <input type="email" id='email' className='input' 
+                            placeholder='type your email' 
+                            onFocus={noPlaceholderOnFocus} 
+                            ref={emailInput} 
+                            onBlur={placeholderOnBlur}
+                        />
+
+
                     
-                        <input type="password" id='password' className='input' placeholder='type your password' onFocus={noPlaceholderOnFocus} ref={passwordInput} onBlur={placeholderOnBlur} />
+                        <input type="password" id='password' className='input' 
+                            placeholder='type your password' 
+                            onFocus={noPlaceholderOnFocus} 
+                            ref={passwordInput} 
+                            onBlur={placeholderOnBlur} 
+                        />
 
-                        {page === "login" ? <p id='changePage' onClick={() => setPage("sign")}>Sign-in</p> : <p id='changePage' onClick={() => setPage("login")}>Log-in</p>}
+
+
+                        {page === "login" ?
+                         <p id='changePage' onClick={() => setPage("sign")}>Sign-in</p> 
+                            :
+                         <p id='changePage' onClick={() => setPage("login")}>Log-in</p>}
 
                     </div>
 
@@ -92,7 +136,8 @@ function Login () {
 }
 
 Login.propTypes = {
-    isUserLog: PropTypes.bool.isRequired
+    setUserLogged: PropTypes.func.isRequired,
+    userLogged: PropTypes.string.isRequired
 }
 
 export default Login;
