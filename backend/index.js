@@ -133,6 +133,20 @@ app.post("/changeName", (req, res) => {
 
 });
 
+app.post('/changeEmail', (req, res) => {
+    const {email, newEmail} = req.body;
+
+    const query = "update user set email = ? where email = ?";
+
+    connection.query(query, [newEmail, email], (err, result) => {
+        if(err) {
+            console.error(err);
+            res.status(500).send({error: "error changing user's email"});
+        }
+        res.status(200).send({success: "success changing user's email"});
+    })
+})
+
 app.post("/getInfo", (req, res) => {
     const {email} = req.body;
 

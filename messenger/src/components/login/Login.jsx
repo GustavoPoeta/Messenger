@@ -103,7 +103,7 @@ function Login (props) {
 
 
 
-                        <input type="email" id='email' className='input' 
+                        <input type="email" id='email' className='input'
                             placeholder='type your email' 
                             onFocus={noPlaceholderOnFocus} 
                             ref={emailInput} 

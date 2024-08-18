@@ -9,6 +9,7 @@ const Options = (props) => {
 
 
     const inputName = useRef(null);
+    const inputEmail = useRef(null);
 
     const [disabledInputs, setDisabledInputs] = useState({
         name: true,
@@ -56,9 +57,36 @@ const Options = (props) => {
 
             })
                 .then (response => console.log(response))
+                .catch(err => console.error(err));
         }
 
     };
+
+    const handleChangeEmail = () => {
+        let howManySpace = 0;
+
+        const inputValue = inputEmail.current.value;
+        const inputArray = inputValue.split('');
+        
+
+        inputArray.forEach(element => {
+            if (element === " ") {
+                howManySpace++;
+            }
+        });
+
+
+        if (howManySpace < inputValue.length || inputValue !== "") {
+            axios.post('http://localhost:3500/changeEmail', {
+                email: props.userLogged,
+                newEmail: inputValue
+            })
+                .then(response => console.log(response))
+                .catch(err => console.error(err));
+        }
+    }
+
+    
 
     const handleClickEdit = (event) => {
         if (event.target.id === "editName" && disabledInputs.name === false) {
@@ -74,11 +102,14 @@ const Options = (props) => {
 
         
         
-        // if (event.target.id === "editEmail") {
+        if (event.target.id === "editEmail" && disabledInputs.email === false) {
 
-            
+            handleChangeEmail();
+            handleClickIsDisabled('email');
 
-        // }
+        } else {
+            handleClickIsDisabled('email');
+        }
     }
 
     return (
@@ -115,6 +146,7 @@ const Options = (props) => {
                                     value={props.inputValues.email}  
                                     className='profileInfoInput'
                                     disabled={disabledInputs.email}
+                                    ref={inputEmail}
                                     onChange={handleInputChange}
                                 />
                                 <img 
@@ -122,7 +154,7 @@ const Options = (props) => {
                                     id='editEmail'
                                     alt="icon for editing profile's info" 
                                     className='profileInfoEdit' 
-                                    onClick={() => handleClickIsDisabled('email')}
+                                    onClick={handleClickEdit}
                                 />
                             </div>
                         </div>
@@ -137,7 +169,7 @@ Options.propTypes = {
     setInputFocused: PropTypes.func.isRequired,
     userLogged: PropTypes.string.isRequired,
     setInputValues: PropTypes.func.isRequired,
-    inputValues: PropTypes.string.isRequired
+    inputValues: PropTypes.object.isRequired
 };
 
 export default Options;
