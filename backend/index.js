@@ -45,7 +45,7 @@ connection.connect((err) => {
 
             if (err) {
                 console.error(err);
-                return res.status(500).send({err: "error hashing password!"});
+                res.status(500).send({err: "error hashing password!"});
             } 
 
             else {
@@ -56,11 +56,11 @@ connection.connect((err) => {
                     
                     if (err) {
                         console.error(err);
-                        return res.status(500).send({err: "error registering user!"});
+                        res.status(500).send({err: "error registering user!"});
                     }
 
                     console.log(result);
-                    res.status(200)
+                    res.status(200).send({success: "User registered successfully"});
 
                 });
 
@@ -82,12 +82,12 @@ connection.connect((err) => {
             if(err) {
 
                 console.error(err);
-                return result.status(500).send({err: "error fetching user!"});
+                res.status(500).send({err: "error fetching user!"});
 
             } 
 
            if (result.length === 0) {
-                return result.status(404).send({err: "user not found"});
+                res.status(404).send({err: "user not found"});
            }
 
 
@@ -96,11 +96,11 @@ connection.connect((err) => {
            
            bcrypt.compare(password, hashedPassword, (err, isMatch) => {
                 if (err) {
-                    return res.status(500).send({err: "error comparing passwords!"});
+                    res.status(500).send({err: "error comparing passwords!"});
                 }
 
                 if( isMatch ) {
-                    res.status(200).send({success: "login successful!"});
+                    res.status(200).send({success: "Login successful"});
                 } 
 
                 else {

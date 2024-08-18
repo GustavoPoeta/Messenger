@@ -29,7 +29,9 @@ function Login (props) {
     };
 
 
-    const handleLogin = () => {
+    const handleLogin = (event) => {
+
+        event.preventDefault();
 
         if (page === "sign") {
 
@@ -90,50 +92,64 @@ function Login (props) {
 
                     <h1 id='loginTitle'>Owl</h1>
 
-                    <div style={{marginBottom: "20px", marginTop: "10px"}}>
+                    <form id='form'>
 
-                        {page !== "login" ? <input type="text" id='username' className='input'
-                            placeholder='type your username'
-                            onFocus={noPlaceholderOnFocus}
-                            ref={usernameInput}
-                            onBlur={placeholderOnBlur}
-                            /> 
-                            :
-                            null}
+                        <div style={{marginBottom: "20px", marginTop: "10px"}}>
 
-
-
-                        <input type="email" id='email' className='input'
-                            placeholder='type your email' 
-                            onFocus={noPlaceholderOnFocus} 
-                            ref={emailInput} 
-                            onBlur={placeholderOnBlur}
-                        />
+                                {page !== "login" ? <input type="text" id='username' className='input'
+                                    required
+                                    placeholder='type your username'
+                                    onFocus={noPlaceholderOnFocus}
+                                    ref={usernameInput}
+                                    onBlur={placeholderOnBlur}
+                                    /> 
+                                    :
+                                    null}
 
 
-                    
-                        <input type="password" id='password' className='input' 
-                            placeholder='type your password' 
-                            onFocus={noPlaceholderOnFocus} 
-                            ref={passwordInput} 
-                            onBlur={placeholderOnBlur} 
-                        />
+
+                                <input type="email" id='email' className='input'
+                                    required
+                                    placeholder='type your email' 
+                                    onFocus={noPlaceholderOnFocus} 
+                                    ref={emailInput} 
+                                    onBlur={placeholderOnBlur}
+                                />
 
 
+                            
+                                <input type="password" id='password' className='input' 
+                                    required
+                                    placeholder='type your password' 
+                                    onFocus={noPlaceholderOnFocus} 
+                                    ref={passwordInput} 
+                                    onBlur={placeholderOnBlur} 
+                                />
+                            
+
+
+
+                            {page === "login" ?
+                            <p id='changePage' onClick={() => setPage("sign")}>Sign-in</p> 
+                                :
+                            <p id='changePage' onClick={() => setPage("login")}>Log-in</p>}
+
+
+                        </div>
 
                         {page === "login" ?
-                         <p id='changePage' onClick={() => setPage("sign")}>Sign-in</p> 
-                            :
-                         <p id='changePage' onClick={() => setPage("login")}>Log-in</p>}
+                        <input type='submit' className='submitBtn' id='logBtn' onClick={handleLogin} value="Login" />
+                        : 
+                        <input type='submit' className='submitBtn' id='signBtn' onClick={handleLogin} value="Sign In"/ >
+                        }
 
-                    </div>
-
-                    {page === "login" ? <button className='submitBtn' id='logBtn' onClick={handleLogin}>Login</button> : <button className='submitBtn' id='signBtn' onClick={handleLogin}>Sign in</button>}
+                    </form>
                 </div>
             </main>  
         </>
     );
 }
+
 
 Login.propTypes = {
     setUserLogged: PropTypes.func.isRequired,
