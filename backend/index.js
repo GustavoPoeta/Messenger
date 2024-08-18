@@ -116,6 +116,38 @@ connection.connect((err) => {
 
 });
 
+
+// change name
+app.post("/changeName", (req, res) => {
+    const {newName, email} = req.body;
+
+    const query = "update user set username = ? where email = ?";
+
+    connection.query(query, [newName, email], (err, result) => {
+        if (err) {
+            res.status(500).send({error: "error changing username"});
+        }
+
+        res.status(200).send({success: "success changing username"});
+    })
+
+});
+
+app.post("/getInfo", (req, res) => {
+    const {email} = req.body;
+
+    const query = "select username from user where email = ?";
+
+    connection.query(query, [email], (err, result) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send({error: "error getting the user's info"});
+        }
+
+        res.status(200).send(result);
+    })
+})
+
 // listening to the port
 app.listen(
     PORT,
