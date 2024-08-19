@@ -53,11 +53,7 @@ const Options = (props) => {
             axios.post('http://localhost:3500/changeName', {
 
                 newName: `${inputName.current.value}`,
-<<<<<<< HEAD
                 email: `${props.userLogged[1]}`
-=======
-                email: `${props.userLogged}`
->>>>>>> 0c2bf16465d9780fc8f5d47f77ac7414dca5ce12
 
             })
                 .then (response => console.log(response))
@@ -82,11 +78,7 @@ const Options = (props) => {
 
         if (howManySpace < inputValue.length || inputValue !== "") {
             axios.post('http://localhost:3500/changeEmail', {
-<<<<<<< HEAD
                 email: props.userLogged[1],
-=======
-                email: props.userLogged,
->>>>>>> 0c2bf16465d9780fc8f5d47f77ac7414dca5ce12
                 newEmail: inputValue
             })
                 .then(response => console.log(response))
@@ -175,11 +167,7 @@ const Options = (props) => {
 
 Options.propTypes = {
     setInputFocused: PropTypes.func.isRequired,
-<<<<<<< HEAD
     userLogged: PropTypes.array.isRequired,
-=======
-    userLogged: PropTypes.string.isRequired,
->>>>>>> 0c2bf16465d9780fc8f5d47f77ac7414dca5ce12
     setInputValues: PropTypes.func.isRequired,
     inputValues: PropTypes.object.isRequired
 };
