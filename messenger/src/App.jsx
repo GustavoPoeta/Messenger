@@ -94,6 +94,7 @@ function App() {
               keyTyped={keyTyped}
               actualPage={actualPage}
               isInputFocused={isInputFocused}
+              userLogged={userLogged}
             />
           </>
         );

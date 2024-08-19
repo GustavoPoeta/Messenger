@@ -1,10 +1,10 @@
   import "./Chat.css";
   import { useState, useEffect, useRef, useCallback } from "react";
-  import users from "../../assets/users.json";
   import PropTypes from "prop-types";
   import insertMediaIcon from "../../assets/imageForInputFile.svg";
   import emojiButton from "../../assets/emoji-sunglasses-fill.svg";
   import Message from "./message/Message.jsx";
+  import axios from "axios";
 
   function Chat(props) {
     const messagesDiv = useRef(null);
@@ -12,27 +12,33 @@
     const inputRef = useRef(null);
 
     const [arrayOfMessages, setArrayMessage] = useState([]);
+    const [matchedUser, setMatchedUser] = useState(null);
 
     // check if there's an user that shares the name of the contact that was clicked
-    const headerHandler = () => {
-      const matchedUser = users.users.find(
-        (user) => user.name === props.userClicked
-      );
+    useEffect(() => {
 
-      // if there's an user that shares the name, create the header with its information
-      if (matchedUser) {
-        return (
-          <>
-            <img
-              src={matchedUser.profile_picture}
-              alt="icone de perfil"
-              id="pfp"
-            />
-            <h5 id="userName">{matchedUser.name}</h5>
-          </>
-        );
+      if (props.userLogged && props.userClicked) {
+
+        axios.post('http://localhost:3500/getFriends', {
+          userID: props.userLogged[0]
+          
+        })
+
+        .then((response) => {
+
+          const user = response.data.find(friend => friend.username === props.userClicked);
+          setMatchedUser(user || null);
+
+        })
+
+        .catch(err => {
+
+          console.error("Error fetching friends:", err);
+
+        });
       }
-    };
+
+    }, [props.userClicked, props.userLogged]);
 
     // if the keyTyped prop isn't empty it makes the input focus
     useEffect(() => {
@@ -107,7 +113,23 @@
       <>
         <div id="Chat">
           <header>
-            <div id="headerInfoContainer">{headerHandler()}</div>
+            <div id="headerInfoContainer">
+
+                {matchedUser ? (
+                <>
+                  <img
+                    src={matchedUser.photo || "default-avatar.png"}
+                    alt="profile icon"
+                    id="pfp"
+                  />
+                  <h5 id="userName">{matchedUser.username}</h5>
+                </>
+                ) 
+                : 
+                null
+              }
+
+            </div>
           </header>
 
           <div id="messages" ref={messagesDiv}>
@@ -155,7 +177,8 @@
     userClicked: PropTypes.string.isRequired,
     keyTyped: PropTypes.string,
     actualPage: PropTypes.string.isRequired,
-    isInputFocused: PropTypes.bool.isRequired
+    isInputFocused: PropTypes.bool.isRequired,
+    userLogged: PropTypes.array.isRequired
   };
 
   export default Chat;
