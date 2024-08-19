@@ -96,8 +96,12 @@
       const minute = date.getMinutes().toString().padStart(2, '0'); // Format minute to 2 digits
 
       return `${hour}:${minute}`;
-  }
+  };
 
+
+  // const saveMessage = () => {
+    
+  // };
 
     return (
       <>

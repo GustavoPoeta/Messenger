@@ -35,6 +35,13 @@ main {
     text-shadow: 0 3px 5px #001523;
 }
 
+#form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
 .input {
     width: 250px;
     height: 40px;

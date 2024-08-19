@@ -1,18 +1,19 @@
 import './Options.css';
 import pfp from '../../assets/cool-pfp-02.jpg';
 import editIcon from '../../assets/pencil-square.svg';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import PropTypes from 'prop-types';
+import axios from 'axios';
 
 const Options = (props) => {
+
+
+    const inputName = useRef(null);
+    const inputEmail = useRef(null);
+
     const [disabledInputs, setDisabledInputs] = useState({
         name: true,
         email: true
-    });
-
-    const [inputValues, setInputValues] = useState({
-        name: 'Cool Name',
-        email: 'coolEmail@gmail.com'
     });
 
     const handleClickIsDisabled = (inputKey) => {
@@ -25,11 +26,91 @@ const Options = (props) => {
 
     const handleInputChange = (e) => {
         const { id, value } = e.target;
-        setInputValues(prev => ({
+        props.setInputValues(prev => ({
             ...prev,
             [id]: value
         }));
     };
+    
+
+    const handleChangeName = () => {
+
+        let howManySpace = 0;
+
+        const inputValue = inputName.current.value;
+        const inputArray = inputValue.split('');
+        
+
+        inputArray.forEach(element => {
+            if (element === " ") {
+                howManySpace++;
+            }
+        });
+
+
+        if (howManySpace < inputValue.length || inputValue !== "") {
+            
+            axios.post('http://localhost:3500/changeName', {
+
+                newName: `${inputName.current.value}`,
+                email: `${props.userLogged[1]}`
+
+            })
+                .then (response => console.log(response))
+                .catch(err => console.error(err));
+        }
+
+    };
+
+    const handleChangeEmail = () => {
+        let howManySpace = 0;
+
+        const inputValue = inputEmail.current.value;
+        const inputArray = inputValue.split('');
+        
+
+        inputArray.forEach(element => {
+            if (element === " ") {
+                howManySpace++;
+            }
+        });
+
+
+        if (howManySpace < inputValue.length || inputValue !== "") {
+            axios.post('http://localhost:3500/changeEmail', {
+                email: props.userLogged[1],
+                newEmail: inputValue
+            })
+                .then(response => console.log(response))
+                .catch(err => console.error(err));
+        }
+    }
+
+    
+
+    const handleClickEdit = (event) => {
+        if (event.target.id === "editName" && disabledInputs.name === false) {
+
+            handleChangeName();
+            handleClickIsDisabled('name');
+
+        } else {
+
+            handleClickIsDisabled('name');
+
+        }
+
+        
+        
+        if (event.target.id === "editEmail" && disabledInputs.email === false) {
+
+            handleChangeEmail();
+            handleClickIsDisabled('email');
+
+        } else {
+            handleClickIsDisabled('email');
+        }
+    }
 
     return (
         <>
@@ -43,16 +124,18 @@ const Options = (props) => {
                                 <input 
                                     type="text" 
                                     id="name"
-                                    value={inputValues.name}  
+                                    value={props.inputValues.name}  
                                     className='profileInfoInput'
                                     disabled={disabledInputs.name}
                                     onChange={handleInputChange}
+                                    ref={inputName}
                                 />
                                 <img 
                                     src={editIcon} 
+                                    id='editName'
                                     alt="icon for editing profile's info" 
                                     className='profileInfoEdit' 
-                                    onClick={() => handleClickIsDisabled('name')}
+                                    onClick={handleClickEdit}
                                 />
                             </div>
 
@@ -60,16 +143,18 @@ const Options = (props) => {
                                 <input 
                                     type="text" 
                                     id="email"
-                                    value={inputValues.email}  
+                                    value={props.inputValues.email}  
                                     className='profileInfoInput'
                                     disabled={disabledInputs.email}
+                                    ref={inputEmail}
                                     onChange={handleInputChange}
                                 />
                                 <img 
                                     src={editIcon} 
+                                    id='editEmail'
                                     alt="icon for editing profile's info" 
                                     className='profileInfoEdit' 
-                                    onClick={() => handleClickIsDisabled('email')}
+                                    onClick={handleClickEdit}
                                 />
                             </div>
                         </div>
@@ -81,7 +166,10 @@ const Options = (props) => {
 };
 
 Options.propTypes = {
-    setInputFocused: PropTypes.func.isRequired
+    setInputFocused: PropTypes.func.isRequired,
+    userLogged: PropTypes.array.isRequired,
+    setInputValues: PropTypes.func.isRequired,
+    inputValues: PropTypes.object.isRequired
 };
 
 export default Options;
