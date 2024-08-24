@@ -4,156 +4,169 @@ import PropTypes from 'prop-types';
 import { useState, useRef } from 'react';
 import axios from 'axios';
 
-function Login (props) {
+function Login(props) {
 
-    const [page, setPage] = useState("login");
-    const emailInput = useRef(null);
-    const usernameInput = useRef(null);
-    const passwordInput = useRef(null);
+    const [page, setPage] = useState("login"); // Toggle between "login" and "sign"
+    const inputArray = useRef(new Array());
+    const submitArray = useRef(new Array());
+    const [formData, setFormData] = useState({
+        username: '',
+        email: '',
+        password: ''
+    });
 
+    // Clear placeholder text on focus
     const noPlaceholderOnFocus = (event) => {
-       event.target.placeholder = ""
+        event.target.placeholder = "";
     };
-    const placeholderOnBlur = (event) => {
 
+    // Restore placeholder text on blur and update form data
+    const placeholderOnBlur = (event) => {
         if (event.target.id === "email") {
             event.target.placeholder = "type your email";
         }
-            else if (event.target.id === "password") {
-                event.target.placeholder = "type your password";
-            }
-            else if (event.target.id === "username") {
-                event.target.placeholder = "type your username";
-            }
-        
+        else if (event.target.id === "password") {
+            event.target.placeholder = "type your password";
+        }
+        else if (event.target.id === "username") {
+            event.target.placeholder = "type your username";
+        }
+
+        const {id, value} = event.target;
+        setFormData(prevState => ({
+            ...prevState,
+            [id]: value
+        }));
     };
 
-
+    // Handle form submission for login or sign up
     const handleLogin = (event) => {
-
         event.preventDefault();
 
         if (page === "sign") {
-
             axios.post('http://localhost:3500/newUser', {
-
-                username: `${usernameInput.current.value}`,
-                email: `${emailInput.current.value}`,
-                password: `${passwordInput.current.value}`
-
+                username: formData.username,
+                email: formData.email,
+                password: formData.password
             })
-
                 .then(response => {
-
                     console.log(response);
-                    props.setUserLogged(`${emailInput.current.value}`);
-
+                    props.setUserLogged([formData.email]);
                 })
-
                 .catch(err => {
-
                     console.error(err);
-
-                })
-
-        } 
-        else if (page === "login") {
-
-            axios.post('http://localhost:3500/users', {
-                email: `${emailInput.current.value}`,
-                password: `${passwordInput.current.value}`
-            })
-
-            .then (response => {
-                
-                if (response.status === 200) {
-
-                    props.setUserLogged(() => [ response.data[0], response.data[1] ] );
-                    
-                }
-
-            })
-
-            .catch (err => {
-                console.error(err);
-            })
+                });
         }
-        
-    }
+        else if (page === "login") {
+            axios.post('http://localhost:3500/users', {
+                email: formData.email,
+                password: formData.password
+            })
+                .then(response => {
+                    if (response.status === 200) {
+                        props.setUserLogged([response.data[0], response.data[1]]);
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                });
+        }
+    };
 
+    // Move focus to the next input field on Enter key press
+    const goToNextInput = (event) => {
+        if (event.key === "Enter") {
+            const inputs = Array.from(event.currentTarget.form.elements);
+            const currentIndex = inputs.indexOf(event.target);
 
+            if (currentIndex > -1 && currentIndex < inputs.length - 1) {
+                inputs[currentIndex + 1].focus();
+            } else if (page === "login" && currentIndex === inputs.length - 1) {
+                event.currentTarget.click();
+            } else if (page === "sign" && currentIndex === inputs.length - 1) {
+                event.currentTarget.click();
+            }
+        }
+    };
 
     return (
         <>
             <main>
                 <div id="loginContainer">
-
-                    <img src={logo} alt="Logo" id='loginLogo' draggable= "false" />
-
+                    <img src={logo} alt="Logo" id='loginLogo' draggable="false" />
                     <h1 id='loginTitle'>Owl</h1>
-
                     <form id='form'>
-
-                        <div style={{marginBottom: "20px", marginTop: "10px"}}>
-
-                                {page !== "login" ? <input type="text" id='username' className='input'
+                        <div style={{ marginBottom: "20px", marginTop: "10px" }}>
+                            {page !== "login" ? (
+                                <input
+                                    type="text"
+                                    id='username'
+                                    className='input'
                                     required
                                     placeholder='type your username'
                                     onFocus={noPlaceholderOnFocus}
-                                    ref={usernameInput}
+                                    ref={(element) => inputArray.current.push(element)}
                                     onBlur={placeholderOnBlur}
-                                    /> 
-                                    :
-                                    null}
-
-
-
-                                <input type="email" id='email' className='input'
-                                    required
-                                    placeholder='type your email' 
-                                    onFocus={noPlaceholderOnFocus} 
-                                    ref={emailInput} 
-                                    onBlur={placeholderOnBlur}
+                                    onKeyUp={goToNextInput}
                                 />
-
-
-                            
-                                <input type="password" id='password' className='input' 
-                                    required
-                                    placeholder='type your password' 
-                                    onFocus={noPlaceholderOnFocus} 
-                                    ref={passwordInput} 
-                                    onBlur={placeholderOnBlur} 
-                                />
-                            
-
-
-
-                            {page === "login" ?
-                            <p id='changePage' onClick={() => setPage("sign")}>Sign-in</p> 
-                                :
-                            <p id='changePage' onClick={() => setPage("login")}>Log-in</p>}
-
-
+                            ) : null}
+                            <input
+                                type="email"
+                                id='email'
+                                className='input'
+                                required
+                                placeholder='type your email'
+                                onFocus={noPlaceholderOnFocus}
+                                ref={(element) => inputArray.current.push(element)}
+                                onBlur={placeholderOnBlur}
+                                onKeyUp={goToNextInput}
+                            />
+                            <input
+                                type="password"
+                                id='password'
+                                className='input'
+                                required
+                                placeholder='type your password'
+                                onFocus={noPlaceholderOnFocus}
+                                ref={(element) => inputArray.current.push(element)}
+                                onBlur={placeholderOnBlur}
+                                onKeyUp={goToNextInput}
+                            />
+                            {page === "login" ? (
+                                <p id='changePage' onClick={() => setPage("sign")}>Sign-in</p>
+                            ) : (
+                                <p id='changePage' onClick={() => setPage("login")}>Log-in</p>
+                            )}
                         </div>
-
-                        {page === "login" ?
-                        <input type='submit' className='submitBtn' id='logBtn' onClick={handleLogin} value="Login" />
-                        : 
-                        <input type='submit' className='submitBtn' id='signBtn' onClick={handleLogin} value="Sign In"/ >
-                        }
-
+                        {page === "login" ? (
+                            <input
+                                type='submit'
+                                className='submitBtn'
+                                id='logBtn'
+                                onClick={handleLogin}
+                                ref={(element) => submitArray.current.push(element)}
+                                value="Login"
+                            />
+                        ) : (
+                            <input
+                                type='submit'
+                                className='submitBtn'
+                                id='signBtn'
+                                onClick={handleLogin}
+                                value="Sign In"
+                                ref={(element) => submitArray.current.push(element)}
+                            />
+                        )}
                     </form>
                 </div>
-            </main>  
+            </main>
         </>
     );
 }
 
-
 Login.propTypes = {
     setUserLogged: PropTypes.func.isRequired,
     userLogged: PropTypes.array.isRequired
-}
+};
 
 export default Login;

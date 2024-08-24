@@ -8,16 +8,18 @@ import Login from "./components/login/Login.jsx";
 import axios from "axios";
 
 function App() {
+  // State to manage the currently clicked user, input focus, and page view
   const [userClicked, setUserClicked] = useState("");
   const [isInputFocused, setInputFocused] = useState(false);
-  const [actualPage, setActualPage] = useState("0");
-  const [userLogged, setUserLogged] = useState([]); // it should store the user's email and id
+  const [actualPage, setActualPage] = useState("0"); // "0": Home, "1": Chat, "2": Options
+  const [userLogged, setUserLogged] = useState([]); // Stores the user's email and ID
   const [inputValues, setInputValues] = useState({
     name: '',
     email: ''
   });
   const [keyTyped, setKeyTyped] = useState("");
 
+  // Update the clicked user name
   const handleName = useCallback(
     (name) => {
       setUserClicked(name);
@@ -25,6 +27,7 @@ function App() {
     [setUserClicked]
   );
 
+  // Update the keyTyped state on key down
   const handleKeyDown = useCallback(
     (event) => {
       setKeyTyped((prev) => prev + event.key);
@@ -32,6 +35,7 @@ function App() {
     [setKeyTyped]
   );
 
+  // Set up and clean up the keydown event listener
   useEffect(() => {
     document.addEventListener("keydown", handleKeyDown);
     return () => {
@@ -39,12 +43,14 @@ function App() {
     };
   }, [handleKeyDown]);
 
+  // Switch to the chat page when a user is clicked
   useEffect(() => {
     if (userClicked !== "") {
       setActualPage("1");
     }
   }, [userClicked]);
 
+  // Fetch user information when the page changes to "Options"
   const getInfo = useCallback(() => {
     axios.post("http://localhost:3500/getInfo", {
       email: userLogged[1],
@@ -64,6 +70,7 @@ function App() {
     }
   }, [actualPage, getInfo]);
 
+  // Render different components based on the current page
   const handlePage = () => {
     switch (actualPage) {
       case "0":

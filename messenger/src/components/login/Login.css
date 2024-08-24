@@ -88,6 +88,9 @@ main {
     color: #adb5bd;
     font-size: 15px;
 }
+.submitBtn:focus {
+    outline: none;
+}
 
 .submitBtn:hover {
     cursor: pointer;
