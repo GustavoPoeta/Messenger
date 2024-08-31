@@ -89,6 +89,7 @@ function NavBar(props) {
 
     // Set up polling to refresh the friends list every second
     useEffect(() => {
+        getFriends();
         const interval = setInterval(() => {
             getFriends();
         }, 1000);

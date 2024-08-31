@@ -1,4 +1,4 @@
-const mysql = require('mysql');
+const mysql = require('mysql2');
 const express = require('express');
 const bcrypt = require('bcrypt');
 const cors = require('cors');
@@ -13,7 +13,7 @@ app.use(express.json()); // Parse incoming JSON requests
 const connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: '',
+    password: '1234',
     database: 'messenger'
 });
 
@@ -32,7 +32,7 @@ app.post("/newUser", (req, res) => {
     const saltRounds = 10;
 
     if (!username || !email || !password) {
-        res.status(400).send({error: "server did not receive required data from client"});
+        return res.status(400).send({error: "server did not receive required data from client"});
     }
 
     bcrypt.hash(password, saltRounds, (err, hash) => {
@@ -49,7 +49,7 @@ app.post("/newUser", (req, res) => {
                 return res.status(500).send({err: "Error registering user!"});
             }
 
-            res.status(200).send({success: "User registered successfully"});
+            return res.status(200).send({success: "User registered successfully"});
         });
     });
 });
@@ -59,9 +59,8 @@ app.post('/users', (req, res) => {
     const {email, password} = req.body;
 
     if (!email || !password) {
-        res.status(400).send({error: "server did not receive required data from client"});
+        return res.status(400).send({error: "server did not receive required data from client"});
     }
-
 
     // Retrieve user data for login
     const getUser = `SELECT id, email, password FROM user WHERE email = ?`;
@@ -83,9 +82,9 @@ app.post('/users', (req, res) => {
             }
 
             if (isMatch) {
-                res.status(200).send([result[0].id, result[0].email]);
+                return res.status(200).send([result[0].id, result[0].email]);
             } else {
-                res.status(401).send({err: "Invalid credentials"});
+                return res.status(401).send({err: "Passwords do not match"});
             }
         });
     });
@@ -96,7 +95,7 @@ app.post("/changeName", (req, res) => {
     const {newName, email} = req.body;
 
     if (!email || !newName) {
-        res.status(400).send({error: "server did not receive required data from client"});
+        return res.status(400).send({error: "server did not receive required data from client"});
     }
 
     // Update the username for the given email
@@ -107,7 +106,7 @@ app.post("/changeName", (req, res) => {
             return res.status(500).send({error: "Error changing username"});
         }
 
-        res.status(200).send({success: "Username changed successfully"});
+        return res.status(200).send({success: "Username changed successfully"});
     });
 });
 
@@ -116,7 +115,7 @@ app.post('/changeEmail', (req, res) => {
     const {email, newEmail} = req.body;
 
     if (!email || !newEmail) {
-        res.status(400).send({error: "server did not receive required data from client"});
+        return res.status(400).send({error: "server did not receive required data from client"});
     }
 
     // Update the email address for the given email
@@ -126,7 +125,7 @@ app.post('/changeEmail', (req, res) => {
             console.error(err);
             return res.status(500).send({error: "Error changing email"});
         }
-        res.status(200).send({success: "Email changed successfully"});
+        return res.status(200).send({success: "Email changed successfully"});
     });
 });
 
@@ -135,13 +134,12 @@ app.post("/getInfo", (req, res) => {
     const {email} = req.body;
 
     if (!email) {
-        res.status(400).send({error: "server did not receive required data from client"});
+        return res.status(400).send({error: "server did not receive required data from client"});
     }
 
     // Retrieve the username for the given email
-    const query = "SELECT username FROM user WHERE email = ?";
+    const query = "SELECT username, photo FROM user WHERE email = ?";
     connection.query(query, [email], (err, result) => {
-        
         if (err) {
             console.error(err);
             return res.status(500).send({error: "Error getting user info"});
@@ -151,7 +149,7 @@ app.post("/getInfo", (req, res) => {
             return res.status(404).send({error: "User not found"});
         }
 
-        res.status(200).send(result);
+        return res.status(200).send(result);
     });
 });
 
@@ -161,64 +159,63 @@ app.post('/checkFriend', (req, res) => {
     const query = "SELECT * FROM friends WHERE (userID = ? AND friendID = ?) OR (userID = ? AND friendID = ?)";
 
     connection.query(query, [userID, friendID, friendID, userID], (err, result) => {
-
         if (err) {
-
             console.error(err);
             return res.status(500).send({ error: "Error checking friendship" });
-
         }
 
         if (result.length > 0) {
-
-            res.status(200).send({ message: "Friendship exists", friendship: result });
-
+            return res.status(200).send({ message: "Friendship exists", friendship: result });
         } else {
-
-            res.status(200).send({ message: "No friendship found" });
-
+            return res.status(200).send({ message: "No friendship found" });
         }
     });
-
-
 });
 
 // Add Friend
 app.post("/addFriend", (req, res) => {
-    const {userID, friendID} = req.body;
-
-
+    const { userID, friendID } = req.body;
 
     if (!userID || !friendID) {
-        res.status(400).send({error: "server did not receive required data from client"});
-    }   
-        // Prevent adding oneself as a friend
-        else if (userID === friendID) {
-            return res.status(400).send({error: "You cannot add yourself as a friend"});
-        } 
+        return res.status(400).send({ error: "server did not receive required data from client" });
+    }
 
-    // Insert a friendship record
-    const insertQuery = "INSERT INTO friends (userID, friendID) VALUES (?, ?)";
+    // Prevent adding oneself as a friend
+    if (userID === friendID) {
+        return res.status(400).send({ error: "You cannot add yourself as a friend" });
+    }
 
-    connection.query(insertQuery, [userID, friendID], (err, result) => {
-
+    // Check if the friendID exists in the user table
+    const checkUserQuery = "SELECT id FROM user WHERE id = ?";
+    connection.query(checkUserQuery, [friendID], (err, result) => {
         if (err) {
             console.error(err);
-            return res.status(500).send({error: "Error inserting friend"});
+            return res.status(500).send({ error: "Error checking if friend exists" });
         }
 
-        res.status(200).send({success: "Friend added successfully"});
+        if (result.length === 0) {
+            return res.status(404).send({ error: "Friend not found" });
+        }
+
+        // If friend exists, proceed to insert the friendship record
+        const insertQuery = "INSERT INTO friends (userID, friendID) VALUES (?, ?)";
+        connection.query(insertQuery, [userID, friendID], (err, result) => {
+            if (err) {
+                return res.status(500).send({ error: "Error inserting friend" });
+            }
+
+            return res.status(200).send({ success: "Friend added successfully" });
+        });
     });
 });
 
 
 // Get Friends
 app.post("/getFriends", (req, res) => {
-
     const {userID} = req.body;
 
     if (!userID) {
-        res.status(400).send({error: "server did not receive required data from client"});
+        return res.status(400).send({error: "server did not receive required data from client"});
     }
 
     // Query to retrieve all friends for the given user, whether they are listed as userID or friendID
@@ -233,37 +230,45 @@ app.post("/getFriends", (req, res) => {
     `;
 
     connection.query(query, [userID, userID], (err, result) => {
-
         if (err) {
             console.error(err);
             return res.status(500).send({error: "Error fetching friend's info"});
         }
 
-        res.status(200).send(result);
+        return res.status(200).send(result);
     });
 });
 
 app.post("/addMessage", (req, res) => {
-    const {userID, friendID, message} = req.body;
+    const {userID, friendID, messageContent, messageOwner, messageTime} = req.body;
     
-    if (!userID || !friendID || !message) {
-        res.status(400).send({error: "server did not receive required data from client"});
+    if (!userID || !friendID || !messageContent, !messageOwner, !messageTime) {
+        return res.status(400).send({error: "server did not receive required data from client"});
     }
 
-    const query = "UPDATE friends SET messages = IFNULL(CONCAT(messages, ?), '') WHERE userID = ? AND friendID = ?";
+    const insertMessage = `
+        INSERT INTO messages (userID, friendID, content, timestamp)
+        VALUES (?, ?, ?, ?)
+    `;
 
-    connection.query(query, [ message , userID, friendID], (err, result) => {
 
+    connection.query(insertMessage, [userID, friendID, messageContent, messageTime], (err, result) => {
         if (err) {
-            
-            console.error(err);
-            res.status(500).send({error: 'error adding message'});
-
+            return res.status(500).send({error: "server was not able to add the message"});
         }
 
-        res.status(200).send({success: "message was successfuly stored"});   
-    });
+        res.status(200).send(result);
+    }) 
 
+    // const query = "UPDATE friends SET messages = IFNULL(CONCAT(messages, ?), '') WHERE userID = ? AND friendID = ?";
+    // connection.query(query, [message, userID, friendID], (err, result) => {
+    //     if (err) {
+    //         console.error(err);
+    //         return res.status(500).send({error: 'error adding message'});
+    //     }
+        
+    //     return res.status(200).send({success: "message was successfully stored"});
+    // });
 });
 
 
@@ -271,34 +276,42 @@ app.post('/getMessages', (req, res) => {
     const {userID, friendID} = req.body;
 
     if (!userID || !friendID) {
-        
-        res.status(400).send({error: "server did not receive required data from client"});
-
+        return res.status(400).send({error: "server did not receive required data from client"});
     }
 
     const query = `
-    SELECT messages 
-    FROM friends 
-    WHERE (userID = ? AND friendID = ?) 
-       OR (userID = ? AND friendID = ?)
-    `;
-
+        SELECT userID, content, timestamp
+        FROM messages
+        WHERE (userID = ? AND friendID = ?) OR (userID = ? AND friendID = ?)
+        ORDER BY timestamp ASC
+    `
     connection.query(query, [userID, friendID, friendID, userID], (err, result) => {
-
-        console.log(result);
-
         if (err) {
-
-            res.status(500).send({error: "server was unable to retrieve message data"});
-
+            console.error(err);
+            return res.status(500).send({error: "server was not able to retrieve the messages"});
         }
 
-        res.status(200).send(result);
-    });
+        if(!result[0] || result[0].messages === '') {
+            return res.status(404).send({not_found: "there aren't messages saved at our database!"});
+        }
+
+
+        const messages = [];
+        
+        result.forEach(message => {
+            const {userID, content, timestamp}= message;
+
+            if (content !== '' && userID && timestamp) {
+                
+                messages.push({ userID, content, timestamp, fromDB: true });
+
+            }
+        });
+
+        return res.status(200).send(messages);
+    })
 
 });
-
-
 
 // Start server
 app.listen(PORT, () => console.log(`Server is running on http://localhost:${PORT}`));
