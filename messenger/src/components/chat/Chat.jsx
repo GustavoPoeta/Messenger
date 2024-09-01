@@ -25,7 +25,7 @@ function Chat(props) {
         setArrayMessage(response.data);
       })
       .catch((err) => {
-        props.setErrorMsg(err.response?.data?.error || "An error occurred while fetching messages.");
+        console.warn(err);
       });
   }, [props]);
 
