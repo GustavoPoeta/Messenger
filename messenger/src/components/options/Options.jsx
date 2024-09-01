@@ -46,7 +46,9 @@ const Options = (props) => {
                 email: props.userLogged[1]
             })
                 .then(response => console.log(response))
-                .catch(err => console.error(err));
+                .catch(err => {
+                    props.setErrorMsg(err.response.data.error);
+                });
         }
     };
 
@@ -62,7 +64,9 @@ const Options = (props) => {
                 newEmail: inputValue
             })
                 .then(response => console.log(response))
-                .catch(err => console.error(err));
+                .catch(err => {
+                    props.setErrorMsg(err.response.data.error);
+                });
         }
     };
 
@@ -138,7 +142,8 @@ Options.propTypes = {
     setInputFocused: PropTypes.func.isRequired,
     userLogged: PropTypes.array.isRequired,
     setInputValues: PropTypes.func.isRequired,
-    inputValues: PropTypes.object.isRequired
+    inputValues: PropTypes.object.isRequired,
+    setErrorMsg: PropTypes.func.isRequired,
 };
 
 export default Options;

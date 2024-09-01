@@ -5,6 +5,7 @@ import Chat from "./components/chat/Chat.jsx";
 import Home from "./components/home/Home.jsx";
 import Options from "./components/options/Options.jsx";
 import Login from "./components/login/Login.jsx";
+import ErrorMessage from "./components/errorMessage/ErrorMessage.jsx";
 import axios from "axios";
 
 function App() {
@@ -18,6 +19,8 @@ function App() {
     email: ''
   });
   const [keyTyped, setKeyTyped] = useState("");
+  const [errorMsg, setErrorMsg] = useState('');
+
 
   // Update the clicked user name
   const handleName = useCallback(
@@ -61,6 +64,10 @@ function App() {
         name: response.data[0]?.username || "",
         email: userLogged[1],
       });
+    })
+    .catch((err) => {
+      setErrorMsg(err.response?.data?.error || "An error occurred while fetching user info.");
+      console.error(err);
     });
   }, [userLogged]);
 
@@ -81,6 +88,7 @@ function App() {
               setInputFocused={setInputFocused}
               setActualPage={setActualPage}
               userLogged={userLogged}
+              setErrorMsg={setErrorMsg}
             />
             <Home />
           </>
@@ -94,6 +102,7 @@ function App() {
               setInputFocused={setInputFocused}
               setActualPage={setActualPage}
               userLogged={userLogged}
+              setErrorMsg={setErrorMsg}
             />
 
             <Chat
@@ -102,6 +111,7 @@ function App() {
               actualPage={actualPage}
               isInputFocused={isInputFocused}
               userLogged={userLogged}
+              setErrorMsg={setErrorMsg}
             />
           </>
         );
@@ -114,12 +124,14 @@ function App() {
               setInputFocused={setInputFocused}
               setActualPage={setActualPage}
               userLogged={userLogged}
+              setErrorMsg={setErrorMsg}
             />
             <Options
               setInputFocused={setInputFocused}
               userLogged={userLogged}
               setInputValues={setInputValues}
               inputValues={inputValues}
+              setErrorMsg={setErrorMsg}
             />
           </>
         );
@@ -132,10 +144,13 @@ function App() {
   return (
     <>
       <div id="app">
+        {errorMsg !== '' ? <ErrorMessage message={errorMsg} setErrorMsg={setErrorMsg} /> : null }
         {userLogged.length !== 0 ? (
-          handlePage()
+          <>
+            {handlePage()}
+          </>
         ) : (
-          <Login setUserLogged={setUserLogged} userLogged={userLogged} />
+          <Login setUserLogged={setUserLogged} userLogged={userLogged} setErrorMsg={setErrorMsg}/>
         )}
       </div>
     </>

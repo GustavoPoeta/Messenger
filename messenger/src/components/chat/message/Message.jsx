@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 import { forwardRef, useCallback, useEffect, useState } from 'react';
 import axios from 'axios';
 
-
 function Message(props, messageRef) {
   const container = `container container${props.messageOwner}`;
   const messageContainer = `messageContainer message${props.messageOwner}`;
@@ -16,13 +15,16 @@ function Message(props, messageRef) {
         email: props.userLogged[1]
       })
       .then((response) => {
-        setUserPhoto(() => response.data[0].photo);
+        setUserPhoto(response.data[0]?.photo || ''); // Fallback if photo is not found
       })
-  }, [props.userLogged]);
+      .catch((err) => {
+        props.setErrorMsg(err.response.data.error);
+      });
+  }, [props]);
 
   useEffect(() => {
     getPfp();
-  }, [props.messageOwner]);
+  }, [getPfp]);
 
   // Function to determine which style to use based on messageOwner
   const checkOwner = () => {
@@ -40,7 +42,6 @@ function Message(props, messageRef) {
           <p className='messageTime'>{props.messageDate}</p>
         </div>
       );
-
     } 
     
     else {
@@ -60,7 +61,11 @@ function Message(props, messageRef) {
     }
   }
 
-  return <>{checkOwner()}</>;
+  return (
+    <>
+      {checkOwner()}
+    </>
+  );
 }
 
 const MessageComponent = forwardRef(Message);
@@ -69,7 +74,8 @@ Message.propTypes = {
   messageContent: PropTypes.string.isRequired,
   messageOwner: PropTypes.string.isRequired,
   messageDate: PropTypes.string.isRequired,
-  userLogged: PropTypes.array.isRequired
+  userLogged: PropTypes.array.isRequired,
+  setErrorMsg: PropTypes.func.isRequired
 };
 
 export default MessageComponent;

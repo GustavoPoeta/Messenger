@@ -1,15 +1,13 @@
 import "./Chat.css";
 import { useState, useEffect, useRef, useCallback } from "react";
 import PropTypes from "prop-types";
-import insertMediaIcon from "../../assets/imageForInputFile.svg";
-import emojiButton from "../../assets/emoji-sunglasses-fill.svg";
 import Message from "./message/Message.jsx";
 import axios from "axios";
 
 function Chat(props) {
   // Refs to handle DOM elements
   const messagesDiv = useRef(null);
-  const messageRef = useRef(null);
+  const messageRef = useRef(null); 
   const inputRef = useRef(null);
 
   // State to manage messages and matched user
@@ -26,8 +24,10 @@ function Chat(props) {
       .then((response) => {
         setArrayMessage(response.data);
       })
-      .catch((err) => console.error("Error fetching messages:", err));
-  }, [props.userClicked, props.userLogged]);
+      .catch((err) => {
+        props.setErrorMsg(err.response?.data?.error || "An error occurred while fetching messages.");
+      });
+  }, [props]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -64,10 +64,10 @@ function Chat(props) {
           setMatchedUser(user || null);
         })
         .catch((err) => {
-          console.error("Error fetching friends:", err);
+          props.setErrorMsg(err.response?.data?.error || "An error occurred while fetching friends.");
         });
     }
-  }, [props.userClicked, props.userLogged]);
+  }, [props, props.userClicked, props.userLogged]);
 
   // Focus the input when a key is typed and the input is not already focused
   useEffect(() => {
@@ -121,9 +121,11 @@ function Chat(props) {
         messageTime: time // time from useState
       })
       .then(response => console.log(response))
-      .catch(err => console.error("Error storing message:", err));
+      .catch(err => {
+        props.setErrorMsg(err.response?.data?.error || "An error occurred while storing the message.");
+      });
     }
-  }, [arrayOfMessages, props.userClicked, props.userLogged]);
+  }, [arrayOfMessages, props, time]);
 
   useEffect(() => {
     storeMessage();
@@ -137,7 +139,7 @@ function Chat(props) {
 
       //message.timestamp
 
-      const [date, time] = message.timestamp.split('T');
+      const [, time] = message.timestamp.split('T');
       const timeCleaned = time.replace(/\.\d+/, '').replace(/Z$/, '');
       
       return (
@@ -155,6 +157,7 @@ function Chat(props) {
 
   return (
     <div id="Chat">
+
       <header>
         <div id="headerInfoContainer">
           {matchedUser && (
@@ -175,22 +178,6 @@ function Chat(props) {
       </div>
 
       <div id="inputMessage">
-        <div id="otherInputsContainer">
-          <button id="emoteBtn">
-            <img
-              src={emojiButton}
-              alt="icon for sending emojis"
-              id="emoteBtnIcon"
-            />
-          </button>
-          <button id="inputMedia">
-            <img
-              src={insertMediaIcon}
-              alt="icon for inserting media"
-              id="inputMediaIcon"
-            />
-          </button>
-        </div>
         <input
           type="text"
           id="input"
@@ -209,6 +196,7 @@ Chat.propTypes = {
   actualPage: PropTypes.string.isRequired,
   isInputFocused: PropTypes.bool.isRequired,
   userLogged: PropTypes.array.isRequired,
+  setErrorMsg: PropTypes.func.isRequired
 };
 
 export default Chat;

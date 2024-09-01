@@ -5,10 +5,9 @@ import { useState, useRef } from 'react';
 import axios from 'axios';
 
 function Login(props) {
-
     const [page, setPage] = useState("login"); // Toggle between "login" and "sign"
-    const inputArray = useRef(new Array());
-    const submitArray = useRef(new Array());
+    const inputArray = useRef([]);
+    const submitArray = useRef([]);
     const [formData, setFormData] = useState({
         username: '',
         email: '',
@@ -49,27 +48,29 @@ function Login(props) {
                 email: formData.email,
                 password: formData.password
             })
-                .then(response => {
-                    console.log(response);
-                    props.setUserLogged([formData.email]);
-                })
-                .catch(err => {
-                    console.error(err);
-                });
+            .then(response => {
+                console.log(response);
+                props.setUserLogged([formData.email]);
+            })
+            .catch(err => {
+                props.setErrorMsg(err.response.data.error);
+                console.error(err);
+            });
         }
         else if (page === "login") {
             axios.post('http://localhost:3500/users', {
                 email: formData.email,
                 password: formData.password
             })
-                .then(response => {
-                    if (response.status === 200) {
-                        props.setUserLogged([response.data[0], response.data[1]]);
-                    }
-                })
-                .catch(err => {
-                    console.error(err);
-                });
+            .then(response => {
+                if (response.status === 200) {
+                    props.setUserLogged([response.data[0], response.data[1]]);
+                }
+            })
+            .catch(err => {
+                props.setErrorMsg(err.response.data.error);
+                console.error(err);
+            });
         }
     };
 
@@ -92,6 +93,8 @@ function Login(props) {
     return (
         <>
             <main>
+            
+
                 <div id="loginContainer">
                     <img src={logo} alt="Logo" id='loginLogo' draggable="false" />
                     <h1 id='loginTitle'>Owl</h1>
@@ -166,7 +169,8 @@ function Login(props) {
 
 Login.propTypes = {
     setUserLogged: PropTypes.func.isRequired,
-    userLogged: PropTypes.array.isRequired
+    userLogged: PropTypes.array.isRequired,
+    setErrorMsg: PropTypes.func.isRequired
 };
 
 export default Login;

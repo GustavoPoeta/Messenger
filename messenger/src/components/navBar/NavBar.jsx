@@ -3,7 +3,7 @@ import User from './user/User';
 import users from '../../assets/users.json';
 import './NavBar.css';
 import logo from '../../assets/logo.png';
-import optionsIcon from '../../assets/gear-fill.svg'
+import optionsIcon from '../../assets/gear-fill.svg';
 import addFriendIcon from '../../assets/person-plus-fill.svg';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import axios from 'axios';
@@ -44,34 +44,32 @@ function NavBar(props) {
 
     // Add a new friend when Enter is pressed
     const addFriend = (event) => {
-        if(event.key === "Enter") {
+        if (event.key === "Enter") {
             axios.post('http://localhost:3500/checkFriend', {
                 userID: props.userLogged[0],
                 friendID: addFriendInput.current.value
             })
-                .then((response) => {
-
-                    if (response.status === 200) {
-
-                        axios.post('http://localhost:3500/addFriend', {
-                            userID: props.userLogged[0],
-                            friendID: addFriendInput.current.value
-                        })
-                            .then(response => {
-                                console.log(response.data);
-                                setTimeout(() => {
-                                    addFriendInput.current.value = "";
-                                }, 500)
-                            })
-                            .catch(err => {
-                                throw new Error(err);
-                            });
-                    }
-                })
-                .catch((err) => {
-                    console.error(err);
-                }); 
-            }
+            .then((response) => {
+                if (response.status === 200) {
+                    axios.post('http://localhost:3500/addFriend', {
+                        userID: props.userLogged[0],
+                        friendID: addFriendInput.current.value
+                    })
+                    .then(response => {
+                        console.log(response.data);
+                        setTimeout(() => {
+                            addFriendInput.current.value = "";
+                        }, 500);
+                    })
+                    .catch(err => {
+                        props.setErrorMsg(err.response.data.error);
+                    });
+                }
+            })
+            .catch(err => {
+                props.setErrorMsg(err.response.data.error);
+            });
+        }
     };
 
     // Fetch the list of friends from the server
@@ -79,13 +77,13 @@ function NavBar(props) {
         axios.post('http://localhost:3500/getFriends', {
             userID: props.userLogged[0],
         })
-            .then(response => {
-                setFriendsList(response.data);
-            })
-            .catch(err => {
-                console.error(err);
-            });
-    }, [props.userLogged]);
+        .then(response => {
+            setFriendsList(response.data);
+        })
+        .catch(err => {
+            props.setErrorMsg(err.response.data.error);
+        });
+    }, [props]);
 
     // Set up polling to refresh the friends list every second
     useEffect(() => {
@@ -153,7 +151,8 @@ NavBar.propTypes = {
     setUserClicked: PropTypes.func.isRequired,
     setInputFocused: PropTypes.func.isRequired,
     setActualPage: PropTypes.func.isRequired,
-    userLogged: PropTypes.array.isRequired
+    userLogged: PropTypes.array.isRequired,
+    setErrorMsg: PropTypes.func.isRequired
 };
 
 export default NavBar;
