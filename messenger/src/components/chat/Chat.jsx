@@ -1,54 +1,84 @@
-  import "./Chat.css";
-  import { useState, useEffect, useRef, useCallback } from "react";
-  import PropTypes from "prop-types";
-  import insertMediaIcon from "../../assets/imageForInputFile.svg";
-  import emojiButton from "../../assets/emoji-sunglasses-fill.svg";
-  import Message from "./message/Message.jsx";
-  import axios from "axios";
+import "./Chat.css";
+import { useState, useEffect, useRef, useCallback } from "react";
+import PropTypes from "prop-types";
+import Message from "./message/Message.jsx";
+import axios from "axios";
 
-  function Chat(props) {
-    const messagesDiv = useRef(null);
-    const messageRef = useRef(null);
-    const inputRef = useRef(null);
+function Chat(props) {
+  // Refs to handle DOM elements
+  const messagesDiv = useRef(null);
+  const messageRef = useRef(null); 
+  const inputRef = useRef(null);
 
-    const [arrayOfMessages, setArrayMessage] = useState([]);
-    const [matchedUser, setMatchedUser] = useState(null);
+  // State to manage messages and matched user
+  const [arrayOfMessages, setArrayMessage] = useState([]);
+  const [matchedUser, setMatchedUser] = useState(null);
+  const [time, setTime] = useState('');
 
-    // check if there's an user that shares the name of the contact that was clicked
-    useEffect(() => {
+  const getMessages = useCallback(() => {
+    axios
+      .post("http://localhost:3500/getMessages", {
+        userID: props.userLogged[0],
+        friendID: props.userClicked,
+      })
+      .then((response) => {
+        setArrayMessage(response.data);
+      })
+      .catch((err) => {
+        console.warn(err);
+      });
+  }, [props]);
 
-      if (props.userLogged && props.userClicked) {
+  useEffect(() => {
+    const interval = setInterval(() => {
+      getMessages();
+    }, 200);
 
-        axios.post('http://localhost:3500/getFriends', {
-          userID: props.userLogged[0]
-          
+    return () => clearInterval(interval);
+  }, [getMessages]);
+
+  // Get current time in HH:MM format
+  const getDate = () => {
+    const date = new Date();
+
+    const timestamp = date.toISOString().slice(0, 19).replace('T', ' '); // 'YYYY-MM-DD HH:MM:SS'
+    const hour = date.getHours().toString().padStart(2, "0");
+    const minute = date.getMinutes().toString().padStart(2, "0");
+
+    setTime(timestamp);
+
+    return `${hour}:${minute}`;
+  };
+
+  // Fetch the user data when a user is clicked
+  useEffect(() => {
+    if (props.userLogged && props.userClicked) {
+      axios
+        .post("http://localhost:3500/getFriends", {
+          userID: props.userLogged[0],
         })
-
         .then((response) => {
-
-          const user = response.data.find(friend => friend.username === props.userClicked);
+          const user = response.data.find(
+            (friend) => friend.id === props.userClicked
+          );
           setMatchedUser(user || null);
-
         })
-
-        .catch(err => {
-
-          console.error("Error fetching friends:", err);
-
+        .catch((err) => {
+          props.setErrorMsg(err.response?.data?.error || "An error occurred while fetching friends.");
         });
-      }
+    }
+  }, [props, props.userClicked, props.userLogged]);
 
-    }, [props.userClicked, props.userLogged]);
+  // Focus the input when a key is typed and the input is not already focused
+  useEffect(() => {
+    if (props.keyTyped && props.actualPage === "1" && !props.isInputFocused) {
+      inputRef.current.focus();
+    }
+  }, [props.keyTyped, props.actualPage, props.isInputFocused]);
 
-    // if the keyTyped prop isn't empty it makes the input focus
-    useEffect(() => {
-      if (props.keyTyped != "" && props.actualPage === "1" && props.isInputFocused === false) {
-        inputRef.current.focus();
-      }
-    }, [props]);
-
-    // checks if enter is pressed and if yes adds the input's value to the array of messages
-    const enterTyped = useCallback((event) => {
+  // Add a new message to the array when Enter is pressed
+  const enterTyped = useCallback(
+    (event) => {
       if (event.key === "Enter") {
         const newMessage = inputRef.current.value;
 
@@ -57,128 +87,116 @@
 
           setArrayMessage((prev) => [
             ...prev,
-            { content: newMessage, owner: "Self", time: currentTime },
+            { content: newMessage, sentBy: props.userLogged[0], time: currentTime },
           ]);
 
           inputRef.current.value = "";
         }
       }
-    }, [setArrayMessage])
-  
+    },
+    [props.userLogged]
+  );
 
-    // function that scrolls the messageDiv to view the lastest message
-    const scrollToBottom = () => {
-      messageRef.current?.scrollIntoView({ behavior: "smooth" });
-    };
-
-
-    useEffect(() => {
-      const observerConfig = { attributes: false, childList: true, subtree: false };
-      
-      const mutationFn = (mutationList) => {
-        for (const mutation of mutationList) {
-          // if it observes a new child node and its className corresponds to messageSelf it scrolls down to bottom
-          if (mutation.type === "childList" && mutation.target.lastChild?.children[0]?.className === "messageContainer messageSelf") {
-            scrollToBottom();
-          }
-        }
-      };
-  
-
-      const observer = new MutationObserver(mutationFn);
-  
-      if (messagesDiv.current) {
-        observer.observe(messagesDiv.current, observerConfig);
-      }
-  
-      return () => {
-        observer.disconnect();
-      };
-    }, []);
-
-    const getDate = () => {
-      const date = new Date();
-      const hour = date.getHours().toString().padStart(2, '0'); // Format hour to 2 digits
-      const minute = date.getMinutes().toString().padStart(2, '0'); // Format minute to 2 digits
-
-      return `${hour}:${minute}`;
+  // Scroll to the bottom of the message list
+  const scrollToBottom = () => {
+    messageRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  // Observe DOM mutations to scroll to the latest message
+  useEffect(() => {
+    scrollToBottom();
+  }, [arrayOfMessages]);
 
-  // const saveMessage = () => {
+  const storeMessage = useCallback(() => {
+    if (arrayOfMessages.length === 0) return;
+
+    const lastMessage = arrayOfMessages[arrayOfMessages.length - 1];
     
-  // };
+    if (lastMessage && !lastMessage.fromDB) {
 
-    return (
-      <>
-        <div id="Chat">
-          <header>
-            <div id="headerInfoContainer">
+      axios.post("http://localhost:3500/addMessage", {
+        userID: props.userLogged[0],
+        friendID: props.userClicked,
+        messageContent: lastMessage.content,
+        messageTime: time // time from useState
+      })
+      .then(response => console.log(response))
+      .catch(err => {
+        props.setErrorMsg(err.response?.data?.error || "An error occurred while storing the message.");
+      });
+    }
+  }, [arrayOfMessages, props, time]);
 
-                {matchedUser ? (
-                <>
-                  <img
-                    src={matchedUser.photo || "default-avatar.png"}
-                    alt="profile icon"
-                    id="pfp"
-                  />
-                  <h5 id="userName">{matchedUser.username}</h5>
-                </>
-                ) 
-                : 
-                null
-              }
+  useEffect(() => {
+    storeMessage();
+  }, [arrayOfMessages, storeMessage]);
 
-            </div>
-          </header>
+  const renderMessage = (message, index) => {
 
-          <div id="messages" ref={messagesDiv}>
-            {arrayOfMessages.map((message, index) => {
-              return (
-                // calls a map into arrayOfMessages which iterates and calls the message component for each message in the array
-                <Message
-                  key={index}
-                  messageOwner={message.owner}
-                  messageContent={message.content}
-                  ref={messageRef}
-                  messageDate = {message.time}
-                />
-              );
-            })}
-          </div>
+    if(message !== null && message.timestamp) {
+      const ownerOfMessage = 
+      Number(message.userID) === props.userLogged[0] ? "Self" : "Friend";
 
-          <div id="inputMessage">
-            <div id="otherInputsContainer">
-              <button id="emoteBtn">
-                <img
-                  src={emojiButton}
-                  alt="icon for sending emojis"
-                  id="emoteBtnIcon"
-                />
-              </button>
+      //message.timestamp
 
-              <button id="inputMedia">
-                <img
-                  src={insertMediaIcon}
-                  alt="icon for inserting media"
-                  id="inputMediaIcon"
-                />
-              </button>
-            </div>
-
-            <input type="text" id="input" ref={inputRef} onKeyDown={enterTyped} maxLength="500" />
-          </div>
-        </div>
-      </>
-    );
-  }
-
-  Chat.propTypes = {
-    userClicked: PropTypes.string.isRequired,
-    keyTyped: PropTypes.string,
-    actualPage: PropTypes.string.isRequired,
-    isInputFocused: PropTypes.bool.isRequired,
-    userLogged: PropTypes.array.isRequired
+      const [, time] = message.timestamp.split('T');
+      const timeCleaned = time.replace(/\.\d+/, '').replace(/Z$/, '');
+      
+      return (
+        <Message
+          key={index}
+          messageOwner={ownerOfMessage}
+          messageContent={message.content}
+          ref={messageRef}
+          messageDate={timeCleaned}
+          userLogged={props.userLogged}
+        />
+      );
+    }
   };
 
-  export default Chat;
+  return (
+    <div id="Chat">
+
+      <header>
+        <div id="headerInfoContainer">
+          {matchedUser && (
+            <>
+              <img
+                src={matchedUser.photo || "default-avatar.png"}
+                alt="profile icon"
+                id="pfp"
+              />
+              <h5 id="userName">{matchedUser.username}</h5>
+            </>
+          )}
+        </div>
+      </header>
+
+      <div id="messages" ref={messagesDiv}>
+        {arrayOfMessages.map((message, index) => renderMessage(message, index))}
+      </div>
+
+      <div id="inputMessage">
+        <input
+          type="text"
+          id="input"
+          ref={inputRef}
+          onKeyDown={enterTyped}
+          maxLength="500"
+        />
+      </div>
+    </div>
+  );
+}
+
+Chat.propTypes = {
+  userClicked: PropTypes.number.isRequired,
+  keyTyped: PropTypes.string,
+  actualPage: PropTypes.string.isRequired,
+  isInputFocused: PropTypes.bool.isRequired,
+  userLogged: PropTypes.array.isRequired,
+  setErrorMsg: PropTypes.func.isRequired
+};
+
+export default Chat;

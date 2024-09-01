@@ -1,0 +1,31 @@
+@keyframes slideIn {
+    from { right: -280px; }
+    to { right: 10px; }
+}
+
+@keyframes slideOut {
+    from { right: 10px; }
+    to { right: -280px; }
+}
+
+#errorMessageDiv {
+    width: 260px;
+    height: 60px;
+    background-color: #003050;
+    border: 1px solid #8b2e2e;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 15px;
+    position: absolute;
+    right: -280px;
+    top: 100px;
+    animation: slideIn 0.5s ease-out forwards, slideOut 0.5s ease-in 4s forwards;
+}
+
+#errorMessage {
+    color: #adb5bd;
+    font-size: 17px;
+    font-weight: 500;
+}

@@ -8,7 +8,7 @@ function User (props) {
         <>
         
             <div className="user" style={props.style} onClick={() => {
-                props.setUserClicked(props.nickname);
+                props.setUserClicked(props.id);
                 props.setActualPage("1");
             }}>
                 <img src={props.iconUrl} alt="Ícone de usuário" className="userPfp"/>
