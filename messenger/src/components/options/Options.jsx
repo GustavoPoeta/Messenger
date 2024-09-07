@@ -1,7 +1,6 @@
 import './Options.css';
-import pfp from '../../assets/cool-pfp-02.jpg';
 import editIcon from '../../assets/pencil-square.svg';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 
@@ -15,6 +14,20 @@ const Options = (props) => {
         name: true,
         email: true
     });
+    const [userPhoto, setUserPhoto] = useState('');
+
+    useEffect(() => {
+
+        axios.post('http://localhost:3500/getInfo', {
+            id: props.userLogged[0]
+        })
+            .then((response) => {
+                console.log(response.data[0].photo)
+                setUserPhoto(response.data[0].photo)
+            })
+            .catch(err => props.setErrorMsg(err));
+
+    }, [props, props.userLogged])
 
     // Toggles the disabled state of input fields and sets focus
     const toggleInputDisabledState = (inputKey) => {
@@ -76,12 +89,12 @@ const Options = (props) => {
             if (!disabledInputs.name) {
                 updateUserName();
             }
-            toggleInputDisabledState('name');
+            toggleInputDisabledState('nameInputOption');
         } else if (event.target.id === "editEmail") {
             if (!disabledInputs.email) {
                 updateUserEmail();
             }
-            toggleInputDisabledState('email');
+            toggleInputDisabledState('emailInputOption');
         }
     };
 
@@ -90,13 +103,24 @@ const Options = (props) => {
             <div id='options'>
                 <div id='optionsContainer'>
                     <div id='profileInfoDiv'>
-                        <img src={pfp} alt="User icon" id='profileInfoPfp' />
+                        <img src={userPhoto} alt="User icon" id='profileInfoPfp' />
 
                         <div id='profileInfoInputs'>
-                            <div style={{ display: "flex", alignItems: "center", marginBottom: "10px" }}>
+
+                            <div id='profileInfoInputDiv'>
+                                <input 
+                                type="text"
+                                id="id"
+                                value={props.userLogged[0]}
+                                className='profileInfoInput'
+                                disabled
+                                />
+                            </div> 
+
+                            <div id='profileInfoInputDiv'>
                                 <input 
                                     type="text" 
-                                    id="name"
+                                    id="nameInputOption"
                                     value={props.inputValues.name}  
                                     className='profileInfoInput'
                                     disabled={disabledInputs.name}
@@ -112,10 +136,10 @@ const Options = (props) => {
                                 />
                             </div>
 
-                            <div style={{ display: "flex", alignItems: "center" }}>
+                            <div id='profileInfoInputDiv'>
                                 <input 
                                     type="text" 
-                                    id="email"
+                                    id="emailInputOption"
                                     value={props.inputValues.email}  
                                     className='profileInfoInput'
                                     disabled={disabledInputs.email}

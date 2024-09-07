@@ -13,7 +13,7 @@ app.use(express.json()); // Parse incoming JSON requests
 const connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: '',
+    password: '1234',
     database: 'messenger'
 });
 

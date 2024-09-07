@@ -31,7 +31,7 @@
     justify-content: flex-start;
     box-sizing: border-box;
     align-items: center;
-    padding: 6%;
+    padding: 2%;
 }
 
 #profileInfoPfp {
@@ -48,12 +48,17 @@
     margin-left: 20px;
 }
 
+#profileInfoInputDiv {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
 
 .profileInfoInput {
     background-color: #003355;
     border: none;
     width: 50%;
-    height: 100%;
+    height: 6vh;
     border-radius: 15px;
     padding: 10px;
     box-sizing: border-box;
