@@ -4,12 +4,18 @@ This is a simple messenger app that tries to recreate the foundation of Discord 
 ## Tech
 It was entirely built in React VITE (in the frontend), and in the backend: nodeJS.
 Axios (frontend), and express, cors, bcrypt were used.
-The database was built in mysql, locally.
+The DataBase was built in mysql, locally.
 
 ## Warning
 It could be deployed in the real world, but have in mind that this isn't german engineering,
 so performance issues are to be expected. 
 
+## How to run
+Clone the repository, and open the terminal first in the backend folder: type "npm run dev" to run the api.
+And do the same in the messenger folder.
+Remember, this project uses a DataBase, you must have it imported and running, locally or not.
+
+## Finally 
 Feel free to improve, use, modify it!
 
 ## Screenshots 
