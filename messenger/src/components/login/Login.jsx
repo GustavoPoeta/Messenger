@@ -90,12 +90,24 @@ function Login(props) {
         }
     };
 
+    const denyAnimation = () => {
+        if (props.errorMsg) {
+
+            return {
+                animation: 'horizontal-shaking 0.3s 1',
+              }
+            
+        }
+    };
+
+    const isInvalid = props.errorMsg ? 'invalid' : '';
+
     return (
         <>
             <main>
             
 
-                <div id="loginContainer">
+                <div id="loginContainer" style={denyAnimation()}>
                     <img src={logo} alt="Logo" id='loginLogo' draggable="false" />
                     <h1 id='loginTitle'>Owl</h1>
                     <form id='form'>
@@ -104,7 +116,7 @@ function Login(props) {
                                 <input
                                     type="text"
                                     id='username'
-                                    className='input'
+                                    className={"input " + isInvalid}
                                     required
                                     placeholder='type your username'
                                     onFocus={noPlaceholderOnFocus}
@@ -116,7 +128,7 @@ function Login(props) {
                             <input
                                 type="email"
                                 id='email'
-                                className='input'
+                                className={"input " + isInvalid}
                                 required
                                 placeholder='type your email'
                                 onFocus={noPlaceholderOnFocus}
@@ -127,7 +139,7 @@ function Login(props) {
                             <input
                                 type="password"
                                 id='password'
-                                className='input'
+                                className={"input " + isInvalid}
                                 required
                                 placeholder='type your password'
                                 onFocus={noPlaceholderOnFocus}
@@ -170,7 +182,8 @@ function Login(props) {
 Login.propTypes = {
     setUserLogged: PropTypes.func.isRequired,
     userLogged: PropTypes.array.isRequired,
-    setErrorMsg: PropTypes.func.isRequired
+    setErrorMsg: PropTypes.func.isRequired,
+    errorMsg: PropTypes.string.isRequired
 };
 
 export default Login;

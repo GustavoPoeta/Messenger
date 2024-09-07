@@ -12,7 +12,7 @@ function Message(props, messageRef) {
   const getPfp = useCallback(() => {
     axios
       .post('http://localhost:3500/getInfo', {
-        email: props.userLogged[1]
+        id: props.userLogged[0]
       })
       .then((response) => {
         setUserPhoto(response.data[0]?.photo || ''); // Fallback if photo is not found

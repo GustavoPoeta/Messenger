@@ -1,44 +1,44 @@
-import messagesJson from "../../../assets/newMsg.json";
-import usersJson from "../../../assets/users.json";
 import "./NewMessage.css";
+import PropTypes from "prop-types";
 
-function NewMessage() {
+function NewMessage(props) {
+
   return (
     <>
+        
+      <div className="newMessage" onClick={() => {
+        props.setActualPage("1");
+        props.setUserClicked(props.messageOwnerID);
+      }}>
 
-        {/* dinamically adds newMessage while there's new messages in the json*/}
-      {Object.keys(messagesJson.newMessages).map((userName) => {
-        const userMessage = messagesJson.newMessages[userName];
-        const user = usersJson.users.find((user) => user.name === userName); // check if the name of the user in the messagesJson is registered in usersJson
+        <div className="profileInfo">
 
-        if (user) {
-          return (
-            <div className="newMessage" key={userName}>
-              <div className="profileInfo">
-                <img
-                  src={user.profile_picture}
-                  alt="Profile Icon"
-                  className="newMessagePfp"
-                />
-                <h4 className="newMessageName">{user.name}</h4>
+          <img src={props.profilePicture} alt="Profile Picture" className="newMessagePfp" />
+          <div className="newMessageName">{props.messageOwner}</div>
 
-                <div className="status">
-                  <p>{user.status}</p>
-                </div>
-              </div>
-              <div className="message">
-                <p>{userMessage.LastNewMessage}</p>
-                <div className="numberOfMessages">
-                    <p>{userMessage.howMany}</p>
-                </div>
-              </div>
-            </div>
-          );
-        }
-        return null;
-      })}
+        </div>
+
+        <div className="message">
+
+          <p>{props.messageContent}</p>
+          <div className="numberOfMessages">{props.messageNumberNew}</div>
+          
+        </div>
+
+    </div>
+
     </>
   );
+}
+
+NewMessage.propTypes = {
+  setActualPage: PropTypes.func.isRequired,
+  setUserClicked: PropTypes.func.isRequired,
+  messageOwnerID: PropTypes.number.isRequired,
+  profilePicture: PropTypes.string.isRequired,
+  messageOwner: PropTypes.string.isRequired,
+  messageContent: PropTypes.string.isRequired,
+  messageNumberNew: PropTypes.number.isRequired
 }
 
 export default NewMessage;

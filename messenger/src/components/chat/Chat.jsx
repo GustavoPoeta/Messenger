@@ -42,12 +42,10 @@ function Chat(props) {
     const date = new Date();
 
     const timestamp = date.toISOString().slice(0, 19).replace('T', ' '); // 'YYYY-MM-DD HH:MM:SS'
-    const hour = date.getHours().toString().padStart(2, "0");
-    const minute = date.getMinutes().toString().padStart(2, "0");
 
     setTime(timestamp);
 
-    return `${hour}:${minute}`;
+    return timestamp;
   };
 
   // Fetch the user data when a user is clicked
@@ -125,13 +123,23 @@ function Chat(props) {
         props.setErrorMsg(err.response?.data?.error || "An error occurred while storing the message.");
       });
     }
-  }, [arrayOfMessages, props, time]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [arrayOfMessages, props.userLogged, props.userClicked, time]);
 
   useEffect(() => {
     storeMessage();
   }, [arrayOfMessages, storeMessage]);
 
   const renderMessage = (message, index) => {
+
+    if (Number(message.userID) !== props.userLogged[0]) {
+
+      axios.post('http://localhost:3500/modifySeen', {
+        messageID: message.id
+      })
+        .catch(err => console.error(err)); 
+
+    } 
 
     if(message !== null && message.timestamp) {
       const ownerOfMessage = 
@@ -141,7 +149,7 @@ function Chat(props) {
 
       const [, time] = message.timestamp.split('T');
       const timeCleaned = time.replace(/\.\d+/, '').replace(/Z$/, '');
-      
+
       return (
         <Message
           key={index}
@@ -150,6 +158,7 @@ function Chat(props) {
           ref={messageRef}
           messageDate={timeCleaned}
           userLogged={props.userLogged}
+          setErrorMsg={props.setErrorMsg}
         />
       );
     }

@@ -56,7 +56,7 @@ function App() {
   // Fetch user information when the page changes to "Options"
   const getInfo = useCallback(() => {
     axios.post("http://localhost:3500/getInfo", {
-      email: userLogged[1],
+      id: userLogged[0],
     })
     .then((response) => {
       console.log(response);
@@ -90,7 +90,12 @@ function App() {
               userLogged={userLogged}
               setErrorMsg={setErrorMsg}
             />
-            <Home />
+            <Home 
+              userLogged={userLogged} 
+              setErrorMsg={setErrorMsg} 
+              setActualPage={setActualPage}
+              setUserClicked={setUserClicked}
+            />
           </>
         );
 
@@ -150,7 +155,7 @@ function App() {
             {handlePage()}
           </>
         ) : (
-          <Login setUserLogged={setUserLogged} userLogged={userLogged} setErrorMsg={setErrorMsg}/>
+          <Login setUserLogged={setUserLogged} userLogged={userLogged} setErrorMsg={setErrorMsg} errorMsg={errorMsg}/>
         )}
       </div>
     </>

@@ -50,7 +50,9 @@ function NavBar(props) {
                 friendID: addFriendInput.current.value
             })
             .then((response) => {
-                if (response.status === 200) {
+                const checkSelf = props.userLogged[0] !== Number(addFriendInput.current.value);
+
+                if (response.status === 200 && checkSelf) {
                     axios.post('http://localhost:3500/addFriend', {
                         userID: props.userLogged[0],
                         friendID: addFriendInput.current.value
@@ -64,6 +66,8 @@ function NavBar(props) {
                     .catch(err => {
                         props.setErrorMsg(err.response.data.error);
                     });
+                } else {
+                    props.setErrorMsg("you can not add yourself as a friend");
                 }
             })
             .catch(err => {
@@ -114,17 +118,24 @@ function NavBar(props) {
                 {/* List of contacts the user has */}
                 <div id="contacts">
                     {
-                        friendsList.map((object, index) => (
-                            <User
-                                style={borderChange(index)}
-                                key={object.index}
-                                nickname={object.username}
-                                id={object.id}
-                                iconUrl={object.photo}
-                                setUserClicked={props.setUserClicked}
-                                setActualPage={props.setActualPage}
-                            />
-                        ))
+                        friendsList.map((object, index) => {
+                            const friendID = object.id;
+
+                            return (
+                                <User
+                                    style={borderChange(index)}
+                                    key={object.id}
+                                    nickname={object.username}
+                                    id={object.id}
+                                    iconUrl={object.photo}
+                                    setUserClicked={props.setUserClicked}
+                                    setActualPage={props.setActualPage}
+                                    userLogged={props.userLogged}
+                                    userID={friendID}
+                                    setErrorMsg={props.setErrorMsg}
+                                />
+                            );
+                        })
                     }
                 </div>
 

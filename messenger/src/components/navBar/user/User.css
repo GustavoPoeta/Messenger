@@ -27,3 +27,15 @@
     color: #adb5bd;
     margin-left: 10px;
 }
+
+#removeFriendBtn {
+    filter: invert(15%) sepia(26%) saturate(6491%) hue-rotate(186deg) brightness(96%) contrast(101%);
+    width: 21px;
+    margin-left: 30px;
+}
+#removeFriendBtn:hover {
+    cursor: pointer;
+    transition: all 200ms linear;
+    transform: scale(1.1);
+
+}
