@@ -3,7 +3,7 @@ This is a simple messenger app that tries to recreate the foundation of Discord 
 
 ## Tech
 It was entirely built in React VITE (in the frontend), and in the backend: nodeJS.
-Axios (frontend), and express, cors, bcrypt were used.
+Axios (frontend), and express, bcrypt were used.
 The DataBase was built in mysql, locally.
 
 ## Warning
